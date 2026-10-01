@@ -1,1 +1,1000 @@
+1. Primary Purpose: 
+IONM Pipeline — a computational pipeline designed to process and analyze intraoperative neurophysiological monitoring data during surgery.
+Primary Purpose — monitor neural signals continuously and identify meaningful changes in neurological function during an operation.
+Data Input — receives recorded neurophysiological signals from IONM monitoring channels.
+Signal Processing — converts the raw recordings into measurable neural features such as amplitude, latency, frequency, and signal quality.
+Baseline Establishment — establishes reference measurements against which later intraoperative measurements can be compared.
+Continuous Monitoring — evaluates neural measurements throughout the recording rather than examining only a single point in time.
+Change Detection — identifies changes in neural measurements relative to the established baseline.
+Multichannel Analysis — compares activity across multiple recording channels to determine whether changes are localized or occur across several channels.
+Trend Analysis — tracks neural measurements over time to identify gradual or sudden changes.
+Artifact Detection — identifies portions of the recording that may contain electrical, physiological, or other non-neural interference.
+Signal Quality Analysis — evaluates whether the recorded data are sufficiently reliable for interpretation.
+Evoked Response Analysis — analyzes neural responses produced by controlled stimulation.
+Amplitude Analysis — measures changes in the strength of neural responses.
+Latency Analysis — measures changes in the timing of neural responses.
+Threshold Detection — compares measurements against predefined thresholds to identify potentially significant changes.
+Reporting — organizes the processed measurements, detected changes, and trends into a structured analysis that can be reviewed by the user.
+Overall Concept — transform continuous raw IONM recordings into structured quantitative information that can be used to monitor neural function throughout surgery.
 
+2. Coding Principals - How I coded it.
+
+# 2. Python Principles and the General Structure
+
+The IONM pipeline was built by combining fundamental Python programming principles with scientific computing and signal-processing methods. The following principles explain the programming foundations used to construct the project.
+
+---
+
+## Variables
+
+**Definition:**
+
+* Variables are names used to store information so the program can use that information later.
+
+**How they were used in the project:**
+
+* Variables stored the recording.
+* Variables stored signal data.
+* Variables stored sampling rates.
+* Variables stored channel information.
+* Variables stored analysis parameters.
+* Variables stored calculated measurements.
+* Variables stored statistical results.
+
+**Actual code used in the pipeline:**
+
+```python
+sampling_rate = 1000
+
+channel_name = "MEP"
+
+signal = raw.get_data(
+    picks=channel_name
+)
+```
+
+Here:
+
+* `sampling_rate` stores the sampling frequency.
+* `channel_name` stores the channel being analyzed.
+* `signal` stores the extracted neural signal.
+
+**Why it matters:**
+
+Variables allow information to move between different stages of the IONM pipeline.
+
+---
+
+## Data Types
+
+**Definition:**
+
+* Data types determine what kind of information Python is storing.
+
+**How they were used in the project:**
+
+The IONM pipeline worked with:
+
+* Numbers for signal measurements.
+* Strings for channel names and labels.
+* Lists for collections of channels or results.
+* Arrays for neural recordings.
+* Boolean values for conditions.
+* Objects for structured recordings.
+
+**Actual code used in the pipeline:**
+
+```python
+channel_name = "MEP"
+
+sampling_rate = 1000
+
+channels = [
+    "MEP",
+    "SSEP",
+    "EEG",
+    "EMG"
+]
+
+artifact_detected = False
+```
+
+These represent different Python data types:
+
+```text
+"MEP"
+↓
+String
+
+1000
+↓
+Number
+
+["MEP", "SSEP", "EEG", "EMG"]
+↓
+List
+
+False
+↓
+Boolean
+```
+
+**Why it matters:**
+
+The pipeline constantly moves between different kinds of information, so Python needs to represent each type appropriately.
+
+---
+
+## Lists
+
+**Definition:**
+
+* A list stores multiple pieces of information together.
+
+**How they were used in the project:**
+
+Lists were used to organize collections of:
+
+* Channels.
+* Measurements.
+* Events.
+* Results.
+* Processing parameters.
+
+**Actual code:**
+
+```python
+channels = [
+    "MEP",
+    "SSEP",
+    "EEG",
+    "EMG"
+]
+```
+
+The pipeline can then iterate through the channels.
+
+```python
+for channel in channels:
+    print(channel)
+```
+
+**Why it matters:**
+
+Instead of creating a separate variable for every channel, the channels can be stored and processed as one collection.
+
+---
+
+## Indexing
+
+**Definition:**
+
+* Indexing allows Python to access one specific item inside a collection.
+
+**How it was used in the project:**
+
+Indexing was used when accessing specific channels, measurements, or portions of neural data.
+
+**Actual code:**
+
+```python
+channel = channels[0]
+```
+
+This selects the first channel.
+
+For numerical signal data:
+
+```python
+first_sample = signal[0]
+```
+
+This accesses the first recorded sample.
+
+**Why it matters:**
+
+Neural recordings are ordered collections of measurements. Indexing allows the pipeline to access specific measurements.
+
+---
+
+## Slicing
+
+**Definition:**
+
+* Slicing selects a section of a larger collection.
+
+**How it was used in the project:**
+
+Slicing allows the pipeline to isolate a specific portion of a recording.
+
+**Actual code:**
+
+```python
+epoch = signal[
+    start_sample:stop_sample
+]
+```
+
+This extracts the section of the neural recording between two sample positions.
+
+The same principle can be used for baseline and response windows.
+
+```python
+baseline = signal[
+    baseline_start:baseline_stop
+]
+```
+
+```python
+response = signal[
+    response_start:response_stop
+]
+```
+
+**Why it matters:**
+
+IONM analysis often focuses on specific time windows rather than the entire recording.
+
+---
+
+## Arrays
+
+**Definition:**
+
+* Arrays store large collections of numerical values.
+
+**How they were used in the project:**
+
+The recorded neural signal was represented numerically as an array so that mathematical and signal-processing operations could be performed on it.
+
+**Actual code:**
+
+```python
+import numpy as np
+
+signal = np.asarray(
+    signal
+)
+```
+
+The resulting array contains the numerical signal samples.
+
+The pipeline can then perform calculations on the entire signal.
+
+```python
+mean = np.mean(signal)
+
+std = np.std(signal)
+
+variance = np.var(signal)
+```
+
+**Why it matters:**
+
+A neural recording may contain thousands or millions of samples. Arrays allow those samples to be processed efficiently.
+
+---
+
+## Functions
+
+**Definition:**
+
+* Functions are reusable blocks of code designed to perform a specific operation.
+
+**How they were used in the project:**
+
+The IONM pipeline was divided into separate operations instead of putting everything into one block of code.
+
+**Actual code structure:**
+
+```python
+def calculate_rms(signal):
+
+    rms = np.sqrt(
+        np.mean(
+            signal ** 2
+        )
+    )
+
+    return rms
+```
+
+The function receives a signal, calculates its RMS value, and returns the result.
+
+It can then be reused:
+
+```python
+rms = calculate_rms(signal)
+```
+
+**Why it matters:**
+
+Functions make the pipeline modular. Each part of the analysis can perform a specific job.
+
+---
+
+## Arguments
+
+**Definition:**
+
+* Arguments are values passed into a function.
+
+**How they were used in the project:**
+
+The pipeline passed signals, thresholds, time windows, and parameters into functions.
+
+**Actual code:**
+
+```python
+def calculate_rms(signal):
+    ...
+```
+
+Then:
+
+```python
+rms = calculate_rms(
+    signal
+)
+```
+
+Here:
+
+```text
+signal
+↓
+Argument
+↓
+calculate_rms()
+```
+
+**Why it matters:**
+
+Arguments allow the same function to process different channels or different sections of an IONM recording.
+
+---
+
+## Return Values
+
+**Definition:**
+
+* A return value is the result produced by a function.
+
+**How they were used in the project:**
+
+Functions returned processed signals, measurements, or analysis results so another part of the pipeline could use them.
+
+**Actual code:**
+
+```python
+def calculate_rms(signal):
+
+    rms = np.sqrt(
+        np.mean(
+            signal ** 2
+        )
+    )
+
+    return rms
+```
+
+The returned value can then be stored:
+
+```python
+rms = calculate_rms(signal)
+```
+
+The structure becomes:
+
+```text
+Signal
+↓
+Function
+↓
+RMS calculation
+↓
+Return value
+↓
+rms variable
+```
+
+**Why it matters:**
+
+Return values allow one stage of the IONM pipeline to pass its results to the next stage.
+
+---
+
+## Conditional Statements
+
+**Definition:**
+
+* Conditional statements allow Python to make decisions based on data.
+
+**How they were used in the project:**
+
+Conditions were used to determine whether signals met particular analysis requirements.
+
+**Actual code:**
+
+```python
+if amplitude > threshold:
+
+    change_detected = True
+
+else:
+
+    change_detected = False
+```
+
+The program evaluates the amplitude and determines which path to follow.
+
+**Why it matters:**
+
+IONM analysis requires the program to make decisions based on measured neural activity.
+
+---
+
+## Boolean Logic
+
+**Definition:**
+
+* Boolean values represent two possible states: `True` or `False`.
+
+**How they were used in the project:**
+
+Boolean values were used to represent analysis conditions.
+
+**Actual code:**
+
+```python
+artifact_detected = False
+```
+
+The program can then use that state:
+
+```python
+if artifact_detected:
+
+    print("Artifact detected.")
+```
+
+**Why it matters:**
+
+Boolean logic allows the pipeline to keep track of whether specific conditions have occurred.
+
+---
+
+## Comparison Operators
+
+**Definition:**
+
+* Comparison operators allow Python to compare two values.
+
+Examples:
+
+```text
+>
+<
+>=
+<=
+==
+!=
+```
+
+**How they were used in the project:**
+
+Comparisons were used when measurements were evaluated against thresholds or other measurements.
+
+**Actual code:**
+
+```python
+if amplitude >= threshold:
+
+    change_detected = True
+```
+
+The program compares the measured amplitude against the defined threshold.
+
+**Why it matters:**
+
+Comparison operators provide the basic logic required for automated signal interpretation.
+
+---
+
+## Thresholds
+
+**Definition:**
+
+* A threshold is a predefined value used to determine whether a measurement meets a specific condition.
+
+**How they were used in the project:**
+
+Thresholds were used when the pipeline evaluated signal measurements.
+
+**Actual code:**
+
+```python
+threshold = 50.0
+
+if amplitude > threshold:
+
+    print(
+        "Signal exceeds threshold."
+    )
+```
+
+The threshold provides a reference point against which the neural measurement can be compared.
+
+**Why it matters:**
+
+Thresholds allow continuous neural measurements to be converted into identifiable conditions.
+
+---
+
+## Loops
+
+**Definition:**
+
+* Loops allow Python to repeat the same operation.
+
+**How they were used in the project:**
+
+Loops were used when the same analysis needed to be applied to multiple channels or measurements.
+
+**Actual code:**
+
+```python
+for channel in channels:
+
+    signal = raw.get_data(
+        picks=channel
+    )
+
+    analyze_signal(
+        signal
+    )
+```
+
+The same analysis is performed for every channel in the list.
+
+**Why it matters:**
+
+IONM recordings can contain many channels. A loop prevents the same code from having to be written repeatedly.
+
+---
+
+## Iteration
+
+**Definition:**
+
+* Iteration means moving through the elements of a collection one at a time.
+
+**How they were used in the project:**
+
+The pipeline could iterate through channels and process each signal individually.
+
+**Actual code:**
+
+```python
+for channel in channels:
+
+    print(
+        "Analyzing:",
+        channel
+    )
+```
+
+The program moves through:
+
+```text
+MEP
+↓
+SSEP
+↓
+EEG
+↓
+EMG
+```
+
+**Why it matters:**
+
+Iteration makes the pipeline scalable to recordings containing multiple channels.
+
+---
+
+## Imports
+
+**Definition:**
+
+* Imports allow Python to use functionality contained in other modules and packages.
+
+**How they were used in the project:**
+
+The IONM pipeline imported scientific computing, signal-processing, data-analysis, and visualization functionality.
+
+**Actual code:**
+
+```python
+import numpy as np
+
+import scipy.signal
+
+import matplotlib.pyplot as plt
+
+import mne
+
+import pandas as pd
+```
+
+Each import makes additional functionality available to the project.
+
+**Why it matters:**
+
+The pipeline does not need to manually implement every scientific calculation. It can use established scientific Python libraries.
+
+---
+
+## Modules
+
+**Definition:**
+
+* A module is a Python file containing reusable code.
+
+**How they were used in the project:**
+
+The IONM pipeline was organized into separate components responsible for different parts of the analysis.
+
+A module can contain functions such as:
+
+```python
+def calculate_rms(signal):
+    ...
+
+def calculate_latency(signal):
+    ...
+
+def detect_artifact(signal):
+    ...
+```
+
+Another part of the project can then import those functions:
+
+```python
+from analysis import calculate_rms
+```
+
+**Why it matters:**
+
+Modules allow the project to be separated into logical components instead of becoming one large Python file.
+
+---
+
+## Objects
+
+**Definition:**
+
+* Objects allow related information and functionality to be grouped together.
+
+**How they were used in the project:**
+
+The IONM pipeline worked with structured recording objects containing information about the neurophysiological data.
+
+For example:
+
+```python
+raw = mne.io.read_raw(
+    filename,
+    preload=True
+)
+```
+
+`raw` is an object representing the loaded recording.
+
+It can contain information about:
+
+* Signal data.
+* Channels.
+* Sampling frequency.
+* Timing.
+* Metadata.
+
+**Why it matters:**
+
+Instead of keeping all recording information in unrelated variables, the object keeps related information organized together.
+
+---
+
+## Methods
+
+**Definition:**
+
+* Methods are functions that belong to an object.
+
+**How they were used in the project:**
+
+The pipeline used methods belonging to scientific data objects to access and manipulate the recording.
+
+**Actual code:**
+
+```python
+signal = raw.get_data(
+    picks=channel
+)
+```
+
+Here:
+
+```text
+raw
+↓
+.get_data()
+↓
+Signal extracted
+```
+
+The method operates on the `raw` recording object.
+
+**Why it matters:**
+
+Methods provide an organized way to perform operations directly on structured recording data.
+
+---
+
+## Mathematical Operations
+
+**Definition:**
+
+* Mathematical operations transform raw numerical signal data into measurable quantities.
+
+**How they were used in the project:**
+
+The pipeline calculated measurements such as:
+
+* Mean.
+* Standard deviation.
+* Variance.
+* RMS.
+* Amplitude.
+* Peak-to-peak amplitude.
+* Latency.
+* Percentage change.
+
+**Actual code:**
+
+```python
+mean = np.mean(signal)
+
+std = np.std(signal)
+
+variance = np.var(signal)
+
+rms = np.sqrt(
+    np.mean(
+        signal ** 2
+    )
+)
+
+peak_to_peak = (
+    np.max(signal)
+    -
+    np.min(signal)
+)
+```
+
+The raw waveform is transformed into quantitative measurements.
+
+**Why it matters:**
+
+These calculations turn the neural recording into measurable values that can be compared and analyzed.
+
+---
+
+## Statistical Analysis
+
+**Definition:**
+
+* Statistical analysis uses mathematical methods to describe and compare measurements.
+
+**How they were used in the project:**
+
+The pipeline used statistical measurements to characterize the neural signals and evaluate changes in the recorded data.
+
+**Actual code:**
+
+```python
+mean = np.mean(signal)
+
+std = np.std(signal)
+
+variance = np.var(signal)
+```
+
+These calculations describe the statistical properties of the signal.
+
+The pipeline can then compare measurements between different portions of the recording.
+
+**Why it matters:**
+
+Statistical analysis allows the project to describe neural activity quantitatively rather than relying only on visual inspection.
+
+---
+
+## File Input and Output
+
+**Definition:**
+
+* File input allows Python to read information from files.
+* File output allows Python to save information.
+
+**How they were used in the project:**
+
+The pipeline loaded neurophysiological recordings and saved analysis results.
+
+**Actual code:**
+
+```python
+raw = mne.io.read_raw(
+    filename,
+    preload=True
+)
+```
+
+The recording is loaded into Python.
+
+Results can then be saved:
+
+```python
+results.to_csv(
+    "ionm_results.csv",
+    index=False
+)
+```
+
+**Why it matters:**
+
+The pipeline needs to connect the original neurophysiological recording to persistent analysis results.
+
+---
+
+# How the Principles Work Together
+
+The individual Python principles combine to create the complete IONM processing workflow.
+
+```text
+Variables
+↓
+Store information
+
+Lists / Arrays
+↓
+Organize neural data
+
+Functions
+↓
+Perform analysis
+
+Arguments
+↓
+Send data into functions
+
+Return values
+↓
+Pass results to the next stage
+
+Loops
+↓
+Repeat analysis
+
+Conditions
+↓
+Make decisions
+
+Mathematics
+↓
+Calculate measurements
+
+Statistics
+↓
+Describe and compare measurements
+
+File I/O
+↓
+Save results
+```
+
+The resulting computational structure is:
+
+```text
+IONM Recording
+↓
+Load Data
+↓
+Store Data in Variables / Objects
+↓
+Represent Signals as Arrays
+↓
+Process Signals
+↓
+Calculate Measurements
+↓
+Apply Conditions / Thresholds
+↓
+Repeat Across Channels
+↓
+Perform Statistical Analysis
+↓
+Save Results
+```
+
+These Python principles form the programming foundation of the IONM pipeline. The scientific packages then provide the specialized tools used to perform the neurophysiological processing itself.
+
+PACKAGES: 
+# PACKAGES
+
+* **MNE** — Loads, manages, filters, and analyzes electrophysiological recordings such as EEG.
+
+* **NumPy** — Performs numerical calculations and works with arrays of EEG signal data.
+
+* **SciPy Signal** — Provides signal-processing and frequency-analysis tools.
+
+* **SciPy Stats** — Provides statistical-analysis and statistical-testing tools.
+
+* **Matplotlib** — Creates graphs and scientific visualizations of the EEG data.
+
+* **Pathlib** — Handles file paths, filenames, directories, and file extensions.
+
+* **Subprocess** — Allows Python to communicate with external programs and operating-system commands.
+
+* **JSON** — Organizes data into a structured format that can be saved and read by other programs.
+
+* **Math** — Provides standard mathematical functions and calculations.
+
+
+
+3. Statistics:
+
+Signal Amplitude — measures the size or strength of the recorded neural signal.
+Peak-to-Peak Amplitude — measures the difference between the highest and lowest points of the signal.
+Baseline Amplitude — represents the signal level before the surgical or physiological event being monitored.
+Amplitude Change — measures how much the signal changes relative to its baseline.
+Percentage Amplitude Change — expresses the amplitude change as a percentage of the baseline.
+Latency — measures the time between a stimulus and the resulting neural response.
+Response Latency — measures how long it takes for the recorded neural response to occur after stimulation.
+Peak Latency — identifies the time at which the response reaches its maximum or minimum amplitude.
+Peak Amplitude — identifies the largest measured response following stimulation.
+Area Under the Curve (AUC) — measures the total magnitude of a signal over a specified time period.
+Root Mean Square (RMS) — measures the overall magnitude of the recorded signal.
+Mean — the average value of the recorded signal.
+Standard Deviation — measures how much the recorded signal varies around its mean.
+Variance — measures the overall spread or variability of the signal.
+Minimum — the lowest recorded signal value.
+Maximum — the highest recorded signal value.
+Signal-to-Noise Ratio (SNR) — measures the strength of the neural signal relative to background noise.
+Noise Level — measures unwanted electrical or physiological variation in the recording.
+Baseline Noise — measures signal variation present before the relevant stimulation or surgical event.
+Frequency — describes how many times a waveform repeats per second.
+Spectral Power — measures the amount of signal energy contained within a frequency range.
+Dominant Frequency — the frequency containing the greatest amount of spectral power.
+Frequency Band Power — measures the signal power within a defined frequency range.
+Artifact Level — measures the amount of unwanted interference present in the recording.
+Artifact Detection — identifies portions of the recording that may contain non-neural interference.
+Channel Quality — describes the quality and reliability of an individual recording channel.
+Channel Amplitude — measures the signal magnitude recorded from a specific monitoring channel.
+Channel Latency — measures the response timing for a specific monitoring channel.
+Baseline Comparison — compares the current neural measurement with the patient's established baseline.
+Amplitude Ratio — compares the current amplitude with a reference or baseline amplitude.
+Percentage Change From Baseline — expresses the difference between the current measurement and baseline as a percentage.
+Trial-to-Trial Variability — measures how much a neural response changes between repeated measurements.
+Response Consistency — measures how consistently a neural response occurs across repeated stimulations.
+Evoked Response — the measurable neural response produced following an external stimulus.
+Evoked Potential — a voltage response generated by neural pathways following stimulation.
+Waveform Morphology — describes the shape and structure of the recorded neural waveform.
+Peak Detection — identifies important peaks or troughs within the recorded waveform.
+Threshold — a predefined measurement level used to identify a meaningful change or event.
+Alarm Threshold — a predefined level at which the monitoring system identifies a potentially significant change requiring attention.
+Trend — describes how a neural measurement changes over time.
+Trend Analysis — evaluates the progression of neural measurements throughout the monitoring period.
+Multichannel Comparison — compares measurements across multiple neural recording channels.
+Temporal Alignment — aligns neural signals with stimulation events, surgical events, or other time references.
+Sampling Rate — the number of measurements recorded per second.
+Recording Duration — the total length of time represented by the recording.
